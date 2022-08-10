@@ -1,12 +1,13 @@
 ﻿using Yandex;
 
 
-Console.WriteLine("Hello, World!");
+Console.WriteLine("Hello, World! input yandex login and pass...");
 string login = "login@yandex.ru";
 string pass = "password";
 //string oauthToken = "AQAAAAAFqAjTAAG8XotGIt5YD09quyr6xCmTbnE";
 
-
+login = Console.ReadLine();
+pass = Console.ReadLine();
 
 
 YandexMusicClient client = new YandexMusicClient();
@@ -15,18 +16,13 @@ var res = client.Authorize(login, pass);
 var isAuth = client.IsAuthorized;
 var token = client.Token;
 var plPeronal = client.GetPersonalPlaylists();
-var somePersPlaylis = plPeronal.Where(pl => pl.Title.ToLower() == "плейлист дня").First();
-var tracksC1 = somePersPlaylis.Tracks.Count;
+
 
 var plFavs = client.GetFavorites();
 
-//этот плейлист без треков!
-var myPl = plFavs.Where(pp => pp.Title.ToLower() == "утро энергия").First();
-//а вот так вот он уже с треками!!! ура!!!
-var plWithTracks = client.GetPlaylist(login, myPl.Kind);
-var testCount = plWithTracks.Tracks.Count;
+
 //download
-var track3 = plWithTracks.Tracks[3];
+//var track3 = plWithTracks.Tracks[3];
 //var trackMore = client.GetTrack(track3.Track.Id);
 //var ff = client.GetDownInfo(trackMore.Id);
 //var fdown = ff[0];
@@ -50,6 +46,15 @@ foreach (var playlist in plPeronal)
 Console.WriteLine(names);
 Console.WriteLine("---");
 //names end
+
+Console.WriteLine("input playlist name");
+string plName = Console.ReadLine();
+//этот плейлист без треков!
+var myPl = plFavs.Where(pp => pp.Title == plName).First();
+//а вот так вот он уже с треками!!! ура!!!
+var plWithTracks = client.GetPlaylist(login, myPl.Kind);
+var testCount = plWithTracks.Tracks.Count;
+
 //tracks shuffle
 List<Yandex.Music.Api.Models.Track.YTrack> tracks1 = new List<Yandex.Music.Api.Models.Track.YTrack>();
 foreach (var track in plWithTracks.Tracks)
@@ -72,9 +77,9 @@ while (n > 1)
 
 //change in pl
 //client.ChangePlaylistTracks(myPl, tracks1.ToArray() , randomizedTracks.ToArray() );
-string name = "random_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss");
+string name = plName+"_random_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss");
 var res3 = client.CreateWithTracks(name, randomizedTracks.ToArray());
 
-Console.WriteLine("SHUFFLED "+res3.Tracks.Count);
+Console.WriteLine("SHUFFLED OK tracks="+res3.Tracks.Count);
 
 Console.ReadLine();
